@@ -1,4 +1,4 @@
-pragma solidity ^0.4.24;
+pragma solidity >=0.4.24 <0.7.0;
 
 import "../ownership/Ownable.sol";
 import "../token/ERC20/ERC20Basic.sol";
@@ -21,16 +21,16 @@ contract TokenDestructible is Ownable {
    * @notice The called token contracts could try to re-enter this contract. Only
    supply token contracts you trust.
    */
-  function destroy(address[] _tokens) public onlyOwner {
+  function destroy(address[] memory _tokens) public onlyOwner {
 
     // Transfer tokens to owner
     for (uint256 i = 0; i < _tokens.length; i++) {
       ERC20Basic token = ERC20Basic(_tokens[i]);
-      uint256 balance = token.balanceOf(this);
+      uint256 balance = token.balanceOf(address(this));
       token.transfer(owner, balance);
     }
 
     // Transfer Eth to owner and terminate contract
-    selfdestruct(owner);
+    selfdestruct(address(uint160(owner)));
   }
 }
